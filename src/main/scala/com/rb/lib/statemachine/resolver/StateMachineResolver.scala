@@ -3,6 +3,7 @@ package com.rb.lib.statemachine.resolver
 import com.rb.lib.statemachine.implicits._
 import com.rb.lib.statemachine.model.Node
 import scala.Option.option2Iterable
+import com.rb.lib.statemachine.model.StateMachine
 
 class StateMachineResolver(val stateMachine: StateMachineMapWrapper) {
 
@@ -14,7 +15,7 @@ class StateMachineResolver(val stateMachine: StateMachineMapWrapper) {
   }
   private def getLastNodes(stateSeq: Seq[Node], currentState: Node): Seq[(Seq[Node], Option[Node])] = {
     val nextStateSeq = stateSeq.diff(List(currentState))
-    stateMachine.map.get(currentState.id).get.next match {
+    stateMachine.map.get(currentState.id).getOrElse(throw new Exception(s"Node not defined ${currentState.id}")).next match {
       case _ if stateSeq.length == nextStateSeq.length => List((nextStateSeq, None))
       case _ if nextStateSeq.isEmpty => List((Nil, Some(currentState)))
       case nextPossibleStates if nextStateSeq.exists(state => nextPossibleStates contains state) =>
@@ -47,11 +48,11 @@ class StateMachineResolver(val stateMachine: StateMachineMapWrapper) {
     }.slice(0, resultMaxSize)
   }
 
-  def getLongestPath(stateSeq: Seq[Node]): (Seq[Any], Option[Any]) = {
+  def getFurthestNode(stateSeq: Seq[Node]): (Seq[Node], Option[Node]) = {
     orderByPathLength(stateSeq).head
   }
 
-  def getShortestPath(stateSeq: Seq[Node]): (Seq[Any], Option[Any]) = {
+  def getClosestNode(stateSeq: Seq[Node]): (Seq[Node], Option[Node]) = {
     orderByPathLength(stateSeq, 1, false).head
   }
 
