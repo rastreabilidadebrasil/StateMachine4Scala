@@ -5,15 +5,15 @@ import com.rb.lib.statemachine.model.Node
 import scala.Option.option2Iterable
 import com.rb.lib.statemachine.model.StateMachine
 
-class StateMachineResolver(val stateMachine: StateMachineMapWrapper) {
+class StateMachineResolver[T](val stateMachine: StateMachineMapWrapper[T]) {
 
-  def getAllPossiblePaths(nodes: Seq[Node]) = {
+  def getAllPossiblePaths(nodes: Seq[Node[T]]) = {
     val initial = stateMachine.map.flatMap {
       tuple => if (tuple._2.isInitial) Some(tuple._2) else None
     }.headOption.getOrElse(throw new Exception("Initial node not found"))
     getLastNodes(nodes, initial)
   }
-  private def getLastNodes(stateSeq: Seq[Node], currentState: Node): Seq[(Seq[Node], Option[Node])] = {
+  private def getLastNodes(stateSeq: Seq[Node[T]], currentState: Node[T]): Seq[(Seq[Node[T]], Option[Node[T]])] = {
     val nextStateSeq = stateSeq.diff(List(currentState))
     stateMachine.map.get(currentState.id).getOrElse(throw new Exception(s"Node not defined ${currentState.id}")).next match {
       case _ if stateSeq.length == nextStateSeq.length => List((nextStateSeq, None))
@@ -30,9 +30,9 @@ class StateMachineResolver(val stateMachine: StateMachineMapWrapper) {
     }
   }
 
-  def orderByPathLength(stateSeq: Seq[Node], resultMaxSize: Int = 1, remaningPathLengthSortAsc: Boolean = true, finalStateFirst: Boolean = true): Seq[(Seq[Node], Option[Node])] = {
+  def orderByPathLength(stateSeq: Seq[Node[T]], resultMaxSize: Int = 1, remaningPathLengthSortAsc: Boolean = true, finalStateFirst: Boolean = true): Seq[(Seq[Node[T]], Option[Node[T]])] = {
     getAllPossiblePaths(stateSeq).sortWith {
-      (p1: (Seq[Node], Option[Node]), p2: (Seq[Node], Option[Node])) =>
+      (p1: (Seq[Node[T]], Option[Node[T]]), p2: (Seq[Node[T]], Option[Node[T]])) =>
         def sortByRemaningPath = {
           remaningPathLengthSortAsc match {
             case true => p1._1.length < p2._1.length
@@ -48,15 +48,15 @@ class StateMachineResolver(val stateMachine: StateMachineMapWrapper) {
     }.slice(0, resultMaxSize)
   }
 
-  def getFurthestNode(stateSeq: Seq[Node]): (Seq[Node], Option[Node]) = {
+  def getFurthestNode(stateSeq: Seq[Node[T]]): (Seq[Node[T]], Option[Node[T]]) = {
     orderByPathLength(stateSeq).head
   }
 
-  def getClosestNode(stateSeq: Seq[Node]): (Seq[Node], Option[Node]) = {
+  def getClosestNode(stateSeq: Seq[Node[T]]): (Seq[Node[T]], Option[Node[T]]) = {
     orderByPathLength(stateSeq, 1, false).head
   }
 
-  def isFinalNode(state: Option[Node]): Boolean = {
+  def isFinalNode(state: Option[Node[T]]): Boolean = {
     state match {
       case Some(node) => node.isFinal
       case None => false

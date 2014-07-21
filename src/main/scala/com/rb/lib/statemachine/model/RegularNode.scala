@@ -1,7 +1,7 @@
 package com.rb.lib.statemachine.model
 
-class RegularNode(override val id: Any) extends NonFinalNode {
+class RegularNode[T](override val id: T) extends NonFinalNode[T] {
 }
 object RegularNode {
-  def apply(id: Int) = new RegularNode(id)
+  def apply[T](id: T) = new RegularNode[T](id)
 }

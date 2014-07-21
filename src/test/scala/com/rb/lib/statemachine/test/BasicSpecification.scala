@@ -5,6 +5,7 @@ import com.rb.lib.statemachine.model.InitialNode
 import com.rb.lib.statemachine.model.RegularNode
 import com.rb.lib.statemachine.implicits._
 import com.rb.lib.statemachine.model.FinalNode
+import com.rb.lib.statemachine.resolver.StateMachineResolver
 
 class BasicSpecification extends Specification {
   val initial = InitialNode(0)

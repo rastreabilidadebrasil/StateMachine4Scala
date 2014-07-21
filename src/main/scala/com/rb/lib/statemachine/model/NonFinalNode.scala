@@ -1,7 +1,7 @@
 package com.rb.lib.statemachine.model
 
-trait NonFinalNode extends Node {
-  def goTo(set: Set[Node]) = {
+trait NonFinalNode[T] extends Node[T] {
+  def goTo(set: Set[Node[T]]) = {
     new StateMachine(id, isInitial, set)
   }
 
