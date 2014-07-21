@@ -18,6 +18,7 @@ object implicits {
   implicit def wrapper2Map(wrapper: StateMachineMapWrapper) = wrapper.map
   implicit def stateMachine2MapWrapper(stateMachine: StateMachine) = new StateMachineMapWrapper(Map(stateMachine.id -> stateMachine))
   implicit def stateMachine2Map(stateMachine: StateMachine) = Map(stateMachine.id -> stateMachine)
+  implicit def anySeq2NodeSeq(anyVals: Seq[Any]) = anyVals.map(anyVal => new Node() { val id = anyVal })
 
   implicit def compile(machine: StateMachineMapWrapper): StateMachineResolver = new StateMachineResolver(machine)
 }
